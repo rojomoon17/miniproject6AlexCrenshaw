@@ -12,6 +12,24 @@
   <a class="btn btn-primary btn-lg" href="{% url 'shows:show_list' %}">Browse shows</a>
 </section>
 
+{% if continue_watching %}
+  <h2 class="h4 mb-3">Continue watching</h2>
+  <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+    {% for entry in continue_watching %}
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title h6">
+              <a class="text-decoration-none stretched-link" href="{% url 'shows:entry_edit' entry.pk %}">{{ entry.show.title }}</a>
+            </h3>
+            {% include "shows/_progress.html" %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 <h2 class="h4 mb-3">Recently added</h2>
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
   {% for show in recent_shows %}

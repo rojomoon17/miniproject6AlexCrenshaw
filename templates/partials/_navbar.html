@@ -8,6 +8,9 @@
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item"><a class="nav-link" href="{% url 'shows:show_list' %}">Browse shows</a></li>
+        {% if user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'shows:watchlist' %}">My watchlist</a></li>
+        {% endif %}
       </ul>
       <ul class="navbar-nav align-items-md-center">
         {% if user.is_authenticated %}

@@ -1,0 +1,24 @@
+<button class="btn btn-outline-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#removeModal{{ entry.pk }}">
+  Remove
+</button>
+
+<div class="modal fade" id="removeModal{{ entry.pk }}" tabindex="-1" aria-labelledby="removeModalLabel{{ entry.pk }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title h5" id="removeModalLabel{{ entry.pk }}">Remove {{ entry.show.title }}?</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        This deletes your progress, rating and notes for this show. It can't be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="post" action="{% url 'shows:entry_delete' entry.pk %}">
+          {% csrf_token %}
+          <button class="btn btn-danger" type="submit">Remove</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

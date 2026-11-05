@@ -1,0 +1,4 @@
+<div class="progress" role="progressbar" aria-label="Episodes watched" aria-valuenow="{{ entry.progress_percent }}" aria-valuemin="0" aria-valuemax="100">
+  <div class="progress-bar" style="width: {{ entry.progress_percent }}%"></div>
+</div>
+<div class="small text-body-secondary mt-1">{{ entry.episodes_watched }} of {{ entry.show.episode_count }} episodes</div>

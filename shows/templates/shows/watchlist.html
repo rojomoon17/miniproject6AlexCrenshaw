@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}My watchlist | TV Show Tracker{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h1 class="h3 mb-0">My watchlist</h1>
+    <p class="text-body-secondary mb-0">
+      {{ show_total }} show{{ show_total|pluralize }} &middot; {{ episode_total }} episode{{ episode_total|pluralize }} watched
+    </p>
+  </div>
+  <a class="btn btn-primary" href="{% url 'shows:show_list' %}">Find more shows</a>
+</div>
+
+{% for group in groups %}
+  <h2 class="h5 mt-4">{{ group.label }} <span class="badge text-bg-secondary">{{ group.entries|length }}</span></h2>
+  <div class="list-group shadow-sm">
+    {% for entry in group.entries %}
+      <div class="list-group-item">
+        <div class="row align-items-center g-3">
+          <div class="col-md-5">
+            <a class="fw-semibold text-decoration-none" href="{{ entry.show.get_absolute_url }}">{{ entry.show.title }}</a>
+            <div class="small text-body-secondary">
+              {{ entry.show.genre.name }}{% if entry.rating %} &middot; Your rating: {{ entry.rating }}/10{% endif %}
+            </div>
+          </div>
+          <div class="col-md-4">{% include "shows/_progress.html" %}</div>
+          <div class="col-md-3 text-md-end">
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'shows:entry_edit' entry.pk %}">Edit</a>
+            {% include "shows/_remove_modal.html" %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% empty %}
+  <div class="text-center py-5">
+    <p class="lead">Your watchlist is empty.</p>
+    <a class="btn btn-primary" href="{% url 'shows:show_list' %}">Browse shows</a>
+  </div>
+{% endfor %}
+{% endblock %}
