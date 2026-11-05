@@ -163,7 +163,8 @@ This project was built with Claude (Opus 5.5, by Anthropic), used through Claude
 - wrote every Python file, all of the templates and this README
 - compiled the sample show data in `sample_shows.json` from its own knowledge, so the episode counts
   and descriptions weren't checked against an outside source
-- wrote the automated tests and ran them, along with a check from a fresh clone
+- wrote the automated tests and ran them, and checked the site from a fresh clone in a scripted
+  Microsoft Edge browser session
 - set up the virtual environment and made the commits, which list Claude as co-author
 
 **My part was directing the project:**
