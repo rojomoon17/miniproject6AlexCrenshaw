@@ -1,3 +1,7 @@
+# INF601 - Advanced Programming in Python
+# Alex Crenshaw
+# Mini Project 6
+
 """
 WSGI config for config project.
 

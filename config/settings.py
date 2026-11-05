@@ -1,3 +1,7 @@
+# INF601 - Advanced Programming in Python
+# Alex Crenshaw
+# Mini Project 6
+
 """
 Django settings for config project.
 
