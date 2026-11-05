@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Browse shows | TV Show Tracker{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Browse shows</h1>
+
+<form class="row g-2 mb-4" method="get" role="search">
+  <div class="col-12 col-md-6">
+    <label class="visually-hidden" for="q">Search</label>
+    <input class="form-control" id="q" type="search" name="q" value="{{ query }}" placeholder="Search by title or network">
+  </div>
+  <div class="col-8 col-md-4">
+    <label class="visually-hidden" for="genre">Genre</label>
+    <select class="form-select" id="genre" name="genre">
+      <option value="">All genres</option>
+      {% for genre in genres %}
+        <option value="{{ genre.name }}" {% if genre.name == selected_genre %}selected{% endif %}>{{ genre.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-4 col-md-2 d-grid">
+    <button class="btn btn-primary" type="submit">Search</button>
+  </div>
+</form>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+  {% for show in page_obj %}
+    {% include "shows/_show_card.html" %}
+  {% empty %}
+    <p class="text-body-secondary">No shows match your search.</p>
+  {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+  <nav class="mt-4" aria-label="Show pages">
+    <ul class="pagination justify-content-center">
+      <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+        <a class="page-link" href="{% if page_obj.has_previous %}{% querystring page=page_obj.previous_page_number %}{% else %}#{% endif %}">Previous</a>
+      </li>
+      <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+      <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+        <a class="page-link" href="{% if page_obj.has_next %}{% querystring page=page_obj.next_page_number %}{% else %}#{% endif %}">Next</a>
+      </li>
+    </ul>
+  </nav>
+{% endif %}
+{% endblock %}

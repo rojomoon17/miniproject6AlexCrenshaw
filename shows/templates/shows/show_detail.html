@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}{{ show.title }} | TV Show Tracker{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'shows:show_list' %}">Browse shows</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ show.title }}</li>
+  </ol>
+</nav>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <h1 class="h2">{{ show.title }}</h1>
+    <p class="text-body-secondary">
+      <span class="badge text-bg-secondary">{{ show.genre.name }}</span>
+      {{ show.network }} &middot; Premiered {{ show.premiere_year }}
+    </p>
+    <p>{{ show.description|default:"No description yet." }}</p>
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Seasons</dt>
+      <dd class="col-sm-9">{{ show.season_count }}</dd>
+      <dt class="col-sm-3">Episodes</dt>
+      <dd class="col-sm-9">{{ show.episode_count }}</dd>
+    </dl>
+  </div>
+</div>
+{% endblock %}

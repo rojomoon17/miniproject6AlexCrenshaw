@@ -1,0 +1,15 @@
+<div class="col">
+  <div class="card h-100 shadow-sm">
+    <div class="card-body d-flex flex-column">
+      <h2 class="card-title h5">
+        <a class="text-decoration-none stretched-link" href="{{ show.get_absolute_url }}">{{ show.title }}</a>
+      </h2>
+      <p class="card-text text-body-secondary small mb-2">{{ show.network }} &middot; {{ show.premiere_year }}</p>
+      <p class="card-text flex-grow-1">{{ show.description|truncatewords:18 }}</p>
+      <div>
+        <span class="badge text-bg-secondary">{{ show.genre.name }}</span>
+        <span class="badge text-bg-light border">{{ show.episode_count }} episode{{ show.episode_count|pluralize }}</span>
+      </div>
+    </div>
+  </div>
+</div>

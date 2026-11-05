@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Home | TV Show Tracker{% endblock %}
+
+{% block content %}
+<section class="p-4 p-md-5 mb-4 bg-dark text-white rounded-3">
+  <h1 class="display-5 fw-bold">Never lose your place again</h1>
+  <p class="lead col-lg-8">
+    Browse {{ show_total }} show{{ show_total|pluralize }}, build your own watchlist, and keep track of
+    how far you've gotten and what you thought.
+  </p>
+  <a class="btn btn-primary btn-lg" href="{% url 'shows:show_list' %}">Browse shows</a>
+</section>
+
+<h2 class="h4 mb-3">Recently added</h2>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+  {% for show in recent_shows %}
+    {% include "shows/_show_card.html" %}
+  {% empty %}
+    <p class="text-body-secondary">No shows yet. Load the sample data or add some in the admin.</p>
+  {% endfor %}
+</div>
+{% endblock %}
