@@ -3,37 +3,55 @@
 {% block title %}Home | TV Show Tracker{% endblock %}
 
 {% block content %}
-<section class="p-4 p-md-5 mb-4 bg-dark text-white rounded-3">
-  <h1 class="display-5 fw-bold">Never lose your place again</h1>
-  <p class="lead col-lg-8">
+<section class="hero mb-4">
+  <h1>Never lose your place again</h1>
+  <p class="lead col-lg-8 mb-4">
     Browse {{ show_total }} show{{ show_total|pluralize }}, build your own watchlist, and keep track of
     how far you've gotten and what you thought.
   </p>
-  <a class="btn btn-primary btn-lg" href="{% url 'shows:show_list' %}">Browse shows</a>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-primary btn-lg" href="{% url 'shows:show_list' %}">Browse shows</a>
+    {% if user.is_authenticated %}
+      <a class="btn btn-outline-light btn-lg" href="{% url 'shows:watchlist' %}">My watchlist</a>
+    {% else %}
+      <a class="btn btn-outline-light btn-lg" href="{% url 'register' %}">Create an account</a>
+    {% endif %}
+  </div>
 </section>
 
 {% if continue_watching %}
-  <h2 class="h4 mb-3">Continue watching</h2>
-  <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
-    {% for entry in continue_watching %}
-      <div class="col">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title h6">
-              <a class="text-decoration-none stretched-link" href="{% url 'shows:entry_edit' entry.pk %}">{{ entry.show.title }}</a>
-            </h3>
-            {% include "shows/_progress.html" %}
+  <section class="mb-4">
+    <div class="section-heading"><h2>Continue watching</h2></div>
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+      {% for entry in continue_watching %}
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="card-title h5">
+                <a class="text-reset text-decoration-none stretched-link" href="{% url 'shows:entry_edit' entry.pk %}">{{ entry.show.title }}</a>
+              </h3>
+              {% include "shows/_progress.html" %}
+            </div>
           </div>
         </div>
-      </div>
-    {% endfor %}
-  </div>
+      {% endfor %}
+    </div>
+  </section>
 {% endif %}
 
-<h2 class="h4 mb-3">Recently added</h2>
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-  {% for show in recent_shows %}
-    {% include "shows/_show_card.html" %}
+<div class="row row-cols-1 row-cols-lg-2 gx-4 gy-2">
+  {% for genre in shelves %}
+    <section class="col">
+      <div class="section-heading">
+        <h2>{{ genre.name }}</h2>
+        <a class="small text-decoration-none" href="{% url 'shows:show_list' %}?genre={{ genre.name|urlencode }}">See all</a>
+      </div>
+      <div class="shelf shelf-compact">
+        {% for show in genre.shows.all|slice:":12" %}
+          {% include "shows/_show_card.html" %}
+        {% endfor %}
+      </div>
+    </section>
   {% empty %}
     <p class="text-body-secondary">No shows yet. Load the sample data or add some in the admin.</p>
   {% endfor %}

@@ -4,40 +4,59 @@
 
 {% block content %}
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-  <div>
-    <h1 class="h3 mb-0">My watchlist</h1>
-    <p class="text-body-secondary mb-0">
-      {{ show_total }} show{{ show_total|pluralize }} &middot; {{ episode_total }} episode{{ episode_total|pluralize }} watched
-    </p>
-  </div>
+  <h1 class="h2 mb-0">My watchlist</h1>
   <a class="btn btn-primary" href="{% url 'shows:show_list' %}">Find more shows</a>
 </div>
 
-{% for group in groups %}
-  <h2 class="h5 mt-4">{{ group.label }} <span class="badge text-bg-secondary">{{ group.entries|length }}</span></h2>
-  <div class="list-group shadow-sm">
-    {% for entry in group.entries %}
-      <div class="list-group-item">
-        <div class="row align-items-center g-3">
-          <div class="col-md-5">
-            <a class="fw-semibold text-decoration-none" href="{{ entry.show.get_absolute_url }}">{{ entry.show.title }}</a>
-            <div class="small text-body-secondary">
-              {{ entry.show.genre.name }}{% if entry.rating %} &middot; Your rating: {{ entry.rating }}/10{% endif %}
+{% if groups %}
+  <div class="row row-cols-2 row-cols-lg-4 g-2 mb-4">
+    <div class="col"><div class="stat-tile"><div class="stat-value">{{ show_total }}</div><div class="stat-label">Show{{ show_total|pluralize }} tracked</div></div></div>
+    <div class="col"><div class="stat-tile"><div class="stat-value">{{ episode_total }}</div><div class="stat-label">Episode{{ episode_total|pluralize }} watched</div></div></div>
+    <div class="col"><div class="stat-tile"><div class="stat-value">{{ completed_total }}</div><div class="stat-label">Completed</div></div></div>
+    <div class="col"><div class="stat-tile"><div class="stat-value">{{ average_rating|default:"-" }}</div><div class="stat-label">Average rating</div></div></div>
+  </div>
+
+  <ul class="nav nav-pills flex-wrap gap-1 mb-3" role="tablist">
+    {% for group in groups %}
+      <li class="nav-item" role="presentation">
+        <button class="nav-link {% if forloop.first %}active{% endif %}" id="tab-{{ group.value }}" type="button" role="tab"
+                data-bs-toggle="pill" data-bs-target="#pane-{{ group.value }}" aria-controls="pane-{{ group.value }}"
+                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+          {{ group.label }} ({{ group.entries|length }})
+        </button>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <div class="tab-content">
+    {% for group in groups %}
+      <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="pane-{{ group.value }}" role="tabpanel"
+           aria-labelledby="tab-{{ group.value }}" tabindex="0">
+        <div class="d-grid gap-2">
+          {% for entry in group.entries %}
+            <div class="entry-row">
+              <div class="poster entry-thumb poster-{{ entry.show.genre.name|slugify }}" aria-hidden="true">{{ entry.show.title|first }}</div>
+              <div>
+                <a class="fw-semibold text-reset text-decoration-none" href="{{ entry.show.get_absolute_url }}">{{ entry.show.title }}</a>
+                <div class="small text-body-secondary">
+                  {{ entry.show.genre.name }}{% if entry.rating %} &middot; Your rating: {{ entry.rating }}/10{% endif %}
+                </div>
+              </div>
+              <div class="entry-progress">{% include "shows/_progress.html" %}</div>
+              <div class="entry-actions">
+                <a class="btn btn-outline-light btn-sm" href="{% url 'shows:entry_edit' entry.pk %}">Edit</a>
+                {% include "shows/_remove_modal.html" %}
+              </div>
             </div>
-          </div>
-          <div class="col-md-4">{% include "shows/_progress.html" %}</div>
-          <div class="col-md-3 text-md-end">
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'shows:entry_edit' entry.pk %}">Edit</a>
-            {% include "shows/_remove_modal.html" %}
-          </div>
+          {% endfor %}
         </div>
       </div>
     {% endfor %}
   </div>
-{% empty %}
-  <div class="text-center py-5">
+{% else %}
+  <div class="hero text-center">
     <p class="lead">Your watchlist is empty.</p>
     <a class="btn btn-primary" href="{% url 'shows:show_list' %}">Browse shows</a>
   </div>
-{% endfor %}
+{% endif %}
 {% endblock %}

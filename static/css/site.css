@@ -1,0 +1,321 @@
+/* Site theme: Bootstrap's dark mode with a near-black palette and red as the accent. */
+[data-bs-theme="dark"] {
+  --tv-bg: #0e0f12;
+  --tv-surface: #17191e;
+  --tv-surface-raised: #20232a;
+  --tv-line: #2e323a;
+  --tv-text: #eceef1;
+  --tv-muted: #a0a6b0;
+  --tv-red: #d81f34;
+  --tv-red-hover: #b81729;
+  --tv-red-text: #ff5a6b;
+
+  --bs-body-bg: var(--tv-bg);
+  --bs-body-color: var(--tv-text);
+  --bs-secondary-color: var(--tv-muted);
+  --bs-border-color: var(--tv-line);
+  --bs-link-color: var(--tv-red-text);
+  --bs-link-color-rgb: 255, 90, 107;
+  --bs-link-hover-color: #ff8592;
+  --bs-link-hover-color-rgb: 255, 133, 146;
+  --bs-primary: var(--tv-red);
+  --bs-primary-rgb: 216, 31, 52;
+  --bs-font-sans-serif: "Barlow", "Segoe UI", system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--bs-font-sans-serif);
+}
+
+h1, h2, h3, .h1, .h2, .h3, .h4, .h5, .navbar-brand, .poster-title, .stat-value {
+  font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+a:focus-visible, .btn:focus-visible, .poster:focus-visible {
+  outline: 2px solid var(--tv-red-text);
+  outline-offset: 2px;
+}
+
+/* Bootstrap components */
+.btn-primary {
+  --bs-btn-bg: var(--tv-red);
+  --bs-btn-border-color: var(--tv-red);
+  --bs-btn-hover-bg: var(--tv-red-hover);
+  --bs-btn-hover-border-color: var(--tv-red-hover);
+  --bs-btn-active-bg: var(--tv-red-hover);
+  --bs-btn-active-border-color: var(--tv-red-hover);
+  --bs-btn-disabled-bg: var(--tv-red);
+  --bs-btn-disabled-border-color: var(--tv-red);
+  --bs-btn-focus-shadow-rgb: 216, 31, 52;
+}
+
+.card {
+  --bs-card-bg: var(--tv-surface);
+  --bs-card-border-color: var(--tv-line);
+}
+
+.modal {
+  --bs-modal-bg: var(--tv-surface-raised);
+  --bs-modal-border-color: var(--tv-line);
+}
+
+.progress {
+  --bs-progress-bg: var(--tv-surface-raised);
+  --bs-progress-bar-bg: var(--tv-red);
+  height: 0.5rem;
+}
+
+.pagination {
+  --bs-pagination-bg: var(--tv-surface);
+  --bs-pagination-border-color: var(--tv-line);
+  --bs-pagination-color: var(--tv-text);
+  --bs-pagination-hover-bg: var(--tv-surface-raised);
+  --bs-pagination-hover-color: var(--tv-text);
+  --bs-pagination-hover-border-color: var(--tv-line);
+  --bs-pagination-disabled-bg: var(--tv-surface);
+  --bs-pagination-disabled-border-color: var(--tv-line);
+  --bs-pagination-disabled-color: var(--tv-muted);
+}
+
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--tv-red);
+  --bs-nav-pills-link-active-color: #fff;
+  --bs-nav-link-color: var(--tv-text);
+  --bs-nav-link-hover-color: #fff;
+}
+
+.form-control, .form-select {
+  background-color: var(--tv-surface-raised);
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: var(--tv-surface-raised);
+  border-color: var(--tv-red);
+  box-shadow: 0 0 0 0.2rem rgba(216, 31, 52, 0.3);
+}
+
+/* Navigation */
+.site-nav {
+  background-color: var(--tv-surface);
+  border-bottom: 2px solid var(--tv-red);
+}
+
+.site-nav .navbar-brand {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+
+.site-nav .navbar-brand span {
+  color: var(--tv-red-text);
+}
+
+.site-nav .nav-link.active {
+  color: #fff;
+  box-shadow: inset 0 -2px 0 var(--tv-red);
+}
+
+/* Home page banner */
+.hero {
+  padding: clamp(1.75rem, 5vw, 3.5rem);
+  border: 1px solid var(--tv-line);
+  border-radius: 0.75rem;
+  background:
+    radial-gradient(circle at 100% 0, rgba(216, 31, 52, 0.38), transparent 60%),
+    var(--tv-surface);
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+/* Poster tiles. Each genre gets its own dark tint. */
+.poster {
+  --poster-tint: #3a3d45;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  aspect-ratio: 2 / 3;
+  padding: 0.85rem;
+  overflow: hidden;
+  border: 1px solid var(--tv-line);
+  border-radius: 0.6rem;
+  background: linear-gradient(165deg, var(--poster-tint), #111216 85%);
+  color: #fff;
+  text-decoration: none;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+a.poster:hover {
+  transform: translateY(-4px);
+  border-color: var(--tv-red);
+  color: #fff;
+}
+
+.poster-crime { --poster-tint: #6b1420; }
+.poster-drama { --poster-tint: #552042; }
+.poster-comedy { --poster-tint: #6e4212; }
+.poster-sci-fi { --poster-tint: #153a5c; }
+.poster-fantasy { --poster-tint: #372768; }
+.poster-animation { --poster-tint: #11514f; }
+.poster-documentary { --poster-tint: #2f4a2b; }
+
+.poster-genre {
+  margin-bottom: auto;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.poster-title {
+  font-size: 1.45rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.poster-meta {
+  margin-top: 0.35rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.8rem;
+}
+
+/* A horizontally scrolling row of posters */
+.shelf {
+  display: flex;
+  gap: 0.85rem;
+  padding: 0.35rem 0.1rem 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-color: var(--tv-line) transparent;
+  scrollbar-width: thin;
+}
+
+.shelf .poster {
+  flex: 0 0 clamp(9.5rem, 18vw, 12rem);
+  scroll-snap-align: start;
+}
+
+.shelf-compact .poster {
+  flex-basis: 9.75rem;
+}
+
+.shelf-compact .poster-title {
+  font-size: 1.25rem;
+}
+
+/* Catalog genre filter */
+.genre-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.genre-chip {
+  padding: 0.3rem 0.85rem;
+  border: 1px solid var(--tv-line);
+  border-radius: 2rem;
+  background: var(--tv-surface);
+  color: var(--tv-text);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.genre-chip:hover {
+  border-color: var(--tv-red);
+  color: #fff;
+}
+
+.genre-chip.active {
+  border-color: var(--tv-red);
+  background: var(--tv-red);
+  color: #fff;
+}
+
+/* Summary numbers */
+.stat-tile {
+  height: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--tv-line);
+  border-radius: 0.6rem;
+  background: var(--tv-surface);
+}
+
+.stat-value {
+  font-size: 2rem;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  color: var(--tv-muted);
+  font-size: 0.85rem;
+}
+
+/* Watchlist rows */
+.entry-row {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 2fr) minmax(0, 2fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--tv-line);
+  border-radius: 0.6rem;
+  background: var(--tv-surface);
+}
+
+.entry-thumb {
+  aspect-ratio: 2 / 3;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+  .entry-row {
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+  }
+
+  .entry-row > .entry-progress,
+  .entry-row > .entry-actions {
+    grid-column: 1 / -1;
+  }
+}
+
+.status-label {
+  color: var(--tv-red-text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster {
+    transition: none;
+  }
+
+  a.poster:hover {
+    transform: none;
+  }
+}

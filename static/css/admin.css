@@ -1,0 +1,54 @@
+/* Gives the Django admin the site's dark and red colors. It always uses this theme, so the toggle is hidden. */
+html[data-theme],
+html:root {
+  --primary: #7a1622;
+  --secondary: #17191e;
+  --accent: #ff5a6b;
+  --primary-fg: #ffffff;
+
+  --body-fg: #eceef1;
+  --body-bg: #0e0f12;
+  --body-quiet-color: #a0a6b0;
+  --body-medium-color: #d3d7dd;
+  --body-loud-color: #ffffff;
+
+  --header-color: #eceef1;
+  --header-branding-color: #ff5a6b;
+  --header-bg: #17191e;
+  --header-link-color: #eceef1;
+
+  --breadcrumbs-fg: #d3d7dd;
+  --breadcrumbs-link-fg: #eceef1;
+  --breadcrumbs-bg: #20232a;
+
+  --link-fg: #ff8592;
+  --link-hover-color: #ffb0b8;
+  --link-selected-fg: #ff5a6b;
+
+  --hairline-color: #2e323a;
+  --border-color: #2e323a;
+
+  --error-fg: #ff8592;
+  --message-success-bg: #14532d;
+  --message-warning-bg: #583305;
+  --message-error-bg: #5c111b;
+
+  --darkened-bg: #17191e;
+  --selected-bg: #20232a;
+  --selected-row: #3a1319;
+
+  --button-bg: #3a3d45;
+  --button-hover-bg: #4a4e58;
+  --default-button-bg: #b81729;
+  --default-button-hover-bg: #d81f34;
+  --delete-button-bg: #7a1622;
+  --delete-button-hover-bg: #b81729;
+  --close-button-bg: #3a3d45;
+  --close-button-hover-bg: #4a4e58;
+
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  display: none;
+}

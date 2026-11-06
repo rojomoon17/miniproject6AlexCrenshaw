@@ -3,11 +3,18 @@
 {% block title %}{% if is_new %}Track{% else %}Edit{% endif %} {{ show.title }} | TV Show Tracker{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
+<div class="row justify-content-center g-4">
+  <div class="d-none d-md-block col-md-4 col-lg-3">
+    <div class="poster poster-{{ show.genre.name|slugify }}" aria-hidden="true">
+      <span class="poster-genre">{{ show.genre.name }}</span>
+      <span class="poster-title">{{ show.title }}</span>
+      <span class="poster-meta">{{ show.network }} &middot; {{ show.premiere_year }}</span>
+    </div>
+  </div>
   <div class="col-md-8 col-lg-6">
-    <div class="card shadow-sm">
+    <div class="card">
       <div class="card-body p-4">
-        <h1 class="h3">{% if is_new %}Add to watchlist{% else %}Update progress{% endif %}</h1>
+        <h1 class="h2">{% if is_new %}Add to watchlist{% else %}Update progress{% endif %}</h1>
         <p class="text-body-secondary">
           <a class="text-decoration-none" href="{{ show.get_absolute_url }}">{{ show.title }}</a>
           &middot; {{ show.season_count }} season{{ show.season_count|pluralize }}
@@ -16,7 +23,7 @@
           {% csrf_token %}
           {% include "partials/_form_fields.html" %}
           <button class="btn btn-primary" type="submit">Save</button>
-          <a class="btn btn-link" href="{% url 'shows:watchlist' %}">Cancel</a>
+          <a class="btn btn-link text-reset" href="{% url 'shows:watchlist' %}">Cancel</a>
         </form>
       </div>
     </div>

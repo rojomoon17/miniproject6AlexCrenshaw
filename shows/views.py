@@ -12,15 +12,16 @@ from django.views.decorators.http import require_POST
 from .forms import WatchEntryForm
 from .models import Genre, Show, WatchEntry
 
-SHOWS_PER_PAGE = 12
-RECENT_SHOW_COUNT = 6
+SHOWS_PER_PAGE = 20
 CONTINUE_WATCHING_COUNT = 3
+RELATED_SHOW_COUNT = 8
 
 
 def home(request):
     context = {
         'show_total': Show.objects.count(),
-        'recent_shows': Show.objects.select_related('genre').order_by('-created_at', '-pk')[:RECENT_SHOW_COUNT],
+        # One shelf per genre, leaving out genres with no shows.
+        'shelves': Genre.objects.filter(shows__isnull=False).distinct().prefetch_related('shows'),
     }
     if request.user.is_authenticated:
         context['continue_watching'] = (
@@ -56,7 +57,12 @@ def show_detail(request, pk):
     entry = None
     if request.user.is_authenticated:
         entry = request.user.watch_entries.filter(show=show).first()
-    return render(request, 'shows/show_detail.html', {'show': show, 'entry': entry})
+    context = {
+        'show': show,
+        'entry': entry,
+        'related_shows': show.genre.shows.exclude(pk=show.pk).select_related('genre')[:RELATED_SHOW_COUNT],
+    }
+    return render(request, 'shows/show_detail.html', context)
 
 
 @login_required
@@ -66,12 +72,15 @@ def watchlist(request):
     for value, label in WatchEntry.Status.choices:
         group_entries = [entry for entry in entries if entry.status == value]
         if group_entries:
-            groups.append({'label': label, 'entries': group_entries})
+            groups.append({'value': value, 'label': label, 'entries': group_entries})
 
+    ratings = [entry.rating for entry in entries if entry.rating is not None]
     context = {
         'groups': groups,
         'show_total': len(entries),
         'episode_total': sum(entry.episodes_watched for entry in entries),
+        'completed_total': sum(entry.status == WatchEntry.Status.COMPLETED for entry in entries),
+        'average_rating': round(sum(ratings) / len(ratings), 1) if ratings else None,
     }
     return render(request, 'shows/watchlist.html', context)
 

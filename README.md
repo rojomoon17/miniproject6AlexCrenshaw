@@ -8,10 +8,13 @@ and notes. Staff manage the catalog through the Django admin.
 
 ## Features
 
-- Searchable catalog with a genre filter and pagination
+- A dark theme with red accents, built on Bootstrap's dark mode
+- Poster-style tiles for every show, with a shelf per genre on the home page
+- Searchable catalog with genre filter chips and pagination
 - Register, log in and log out
-- A private watchlist grouped by status (Watching, Plan to watch, On hold, Completed, Dropped), with
-  progress bars and running totals
+- A private watchlist with a tab for each status (Watching, Plan to watch, On hold, Completed, Dropped),
+  progress bars, and totals including your average rating
+- Show pages that suggest other shows in the same genre
 - A form to add or update a show's status, progress, rating and notes, checked on the server
 - A Bootstrap modal to confirm removing a show from your watchlist
 - A customized Django admin for genres, shows and watch entries
@@ -21,8 +24,8 @@ and notes. Staff manage the catalog through the Django admin.
 
 | URL | Page | Access |
 |---|---|---|
-| `/` | Home, with recently added shows and your "Continue watching" list | Public |
-| `/shows/` | Catalog, with search and genre filter | Public |
+| `/` | Home, with your "Continue watching" list and a shelf of shows per genre | Public |
+| `/shows/` | Catalog, with search and genre filter chips | Public |
 | `/shows/<id>/` | Show details and your progress on that show | Public |
 | `/shows/<id>/track/` | Form to add a show to your watchlist | Login required |
 | `/watchlist/` | Your watchlist, grouped by status | Login required |
@@ -35,7 +38,7 @@ and notes. Staff manage the catalog through the Django admin.
 
 - Python 3.10 or newer
 - Django 5.2 (installed from `requirements.txt`)
-- An internet connection when viewing the site, because Bootstrap loads from a CDN
+- An internet connection when viewing the site, because Bootstrap and the fonts load from CDNs
 
 ## Installation
 
@@ -171,3 +174,5 @@ This project was built with Claude (Opus 5.5, by Anthropic), used through Claude
 
 - I gave Claude the assignment and the AI Use Policy
 - Claude first suggested a video game backlog tracker, and I chose a TV show tracker instead
+- after seeing screenshots, I asked for a darker color palette with red as the secondary color and a
+  more visually appealing way to organize the site; Claude chose the specific design

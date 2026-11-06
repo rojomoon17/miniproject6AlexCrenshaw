@@ -1,15 +1,16 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+{% with current=request.resolver_match.url_name %}
+<nav class="navbar navbar-expand-md site-nav">
   <div class="container">
-    <a class="navbar-brand fw-semibold" href="{% url 'shows:home' %}">TV Show Tracker</a>
+    <a class="navbar-brand" href="{% url 'shows:home' %}">TV Show <span>Tracker</span></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
             aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="{% url 'shows:show_list' %}">Browse shows</a></li>
+        <li class="nav-item"><a class="nav-link {% if current == 'show_list' %}active{% endif %}" href="{% url 'shows:show_list' %}">Browse shows</a></li>
         {% if user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'shows:watchlist' %}">My watchlist</a></li>
+          <li class="nav-item"><a class="nav-link {% if current == 'watchlist' %}active{% endif %}" href="{% url 'shows:watchlist' %}">My watchlist</a></li>
         {% endif %}
       </ul>
       <ul class="navbar-nav align-items-md-center">
@@ -33,3 +34,4 @@
     </div>
   </div>
 </nav>
+{% endwith %}

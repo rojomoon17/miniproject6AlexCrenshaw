@@ -47,6 +47,42 @@ class PublicPageTests(ShowTestCase):
         self.assertEqual(self.client.get(reverse('shows:show_detail', args=[99999])).status_code, 404)
 
 
+class OrganizationTests(ShowTestCase):
+    def test_home_has_a_shelf_for_each_genre_with_shows(self):
+        Genre.objects.create(name='Empty Genre')
+        response = self.client.get(reverse('shows:home'))
+        self.assertEqual([genre.name for genre in response.context['shelves']], ['Comedy', 'Crime'])
+        self.assertContains(response, 'Test Crime Show')
+
+    def test_detail_suggests_other_shows_in_the_genre(self):
+        same_genre = Show.objects.create(
+            title='Another Crime Show', genre=self.crime, network='AMC', premiere_year=2008,
+        )
+        response = self.client.get(self.show.get_absolute_url())
+        self.assertEqual(list(response.context['related_shows']), [same_genre])
+
+    def test_genre_chips_keep_the_search_and_all_clears_the_genre(self):
+        response = self.client.get(reverse('shows:show_list'), {'q': 'test', 'genre': 'Crime', 'page': 1})
+        self.assertContains(response, 'href="?q=test"')
+        self.assertContains(response, 'href="?q=test&amp;genre=Comedy"')
+
+    def test_watchlist_totals(self):
+        WatchEntry.objects.create(user=self.alice, show=self.show, status='completed', episodes_watched=10, rating=9)
+        WatchEntry.objects.create(user=self.alice, show=self.other_show, episodes_watched=5, rating=6)
+        self.client.force_login(self.alice)
+        context = self.client.get(reverse('shows:watchlist')).context
+        self.assertEqual(
+            (context['show_total'], context['episode_total'], context['completed_total'], context['average_rating']),
+            (2, 15, 1, 7.5),
+        )
+        self.assertEqual([group['value'] for group in context['groups']], ['planned', 'completed'])
+
+    def test_average_rating_is_empty_without_ratings(self):
+        WatchEntry.objects.create(user=self.alice, show=self.show)
+        self.client.force_login(self.alice)
+        self.assertIsNone(self.client.get(reverse('shows:watchlist')).context['average_rating'])
+
+
 class LoginRequiredTests(ShowTestCase):
     def test_private_pages_redirect_to_login(self):
         entry = WatchEntry.objects.create(user=self.alice, show=self.show)

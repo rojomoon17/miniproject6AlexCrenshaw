@@ -6,39 +6,45 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="{% url 'shows:show_list' %}">Browse shows</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'shows:show_list' %}?genre={{ show.genre.name|urlencode }}">{{ show.genre.name }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ show.title }}</li>
   </ol>
 </nav>
 
-<div class="row g-4">
-  <div class="col-lg-8">
-    <h1 class="h2">{{ show.title }}</h1>
-    <p class="text-body-secondary">
-      <span class="badge text-bg-secondary">{{ show.genre.name }}</span>
-      {{ show.network }} &middot; Premiered {{ show.premiere_year }}
-    </p>
-    <p>{{ show.description|default:"No description yet." }}</p>
-    <dl class="row mb-0">
-      <dt class="col-sm-3">Seasons</dt>
-      <dd class="col-sm-9">{{ show.season_count }}</dd>
-      <dt class="col-sm-3">Episodes</dt>
-      <dd class="col-sm-9">{{ show.episode_count }}</dd>
-    </dl>
+<div class="row g-4 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="poster poster-{{ show.genre.name|slugify }}" aria-hidden="true">
+      <span class="poster-genre">{{ show.genre.name }}</span>
+      <span class="poster-title">{{ show.title }}</span>
+    </div>
   </div>
-  <div class="col-lg-4">
-    <div class="card shadow-sm">
+
+  <div class="col-12 col-md-9 col-lg-5">
+    <h1 class="display-6">{{ show.title }}</h1>
+    <p class="text-body-secondary">{{ show.genre.name }} &middot; {{ show.network }}</p>
+    <p>{{ show.description|default:"No description yet." }}</p>
+    <div class="row row-cols-3 g-2">
+      <div class="col"><div class="stat-tile"><div class="stat-value">{{ show.premiere_year }}</div><div class="stat-label">Premiered</div></div></div>
+      <div class="col"><div class="stat-tile"><div class="stat-value">{{ show.season_count }}</div><div class="stat-label">Season{{ show.season_count|pluralize }}</div></div></div>
+      <div class="col"><div class="stat-tile"><div class="stat-value">{{ show.episode_count }}</div><div class="stat-label">Episode{{ show.episode_count|pluralize }}</div></div></div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card">
       <div class="card-body">
         {% if entry %}
-          <h2 class="h5">{{ entry.get_status_display }}</h2>
+          <div class="status-label mb-2">{{ entry.get_status_display }}</div>
           {% include "shows/_progress.html" %}
-          {% if entry.rating %}<p class="mt-2 mb-0">Your rating: {{ entry.rating }}/10</p>{% endif %}
-          {% if entry.notes %}<p class="mt-2 mb-0">{{ entry.notes|linebreaksbr }}</p>{% endif %}
+          {% if entry.rating %}<p class="mt-3 mb-0">Your rating: {{ entry.rating }}/10</p>{% endif %}
+          {% if entry.notes %}<p class="mt-2 mb-0 text-body-secondary">{{ entry.notes|linebreaksbr }}</p>{% endif %}
           <div class="mt-3">
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'shows:entry_edit' entry.pk %}">Edit</a>
+            <a class="btn btn-outline-light btn-sm" href="{% url 'shows:entry_edit' entry.pk %}">Edit</a>
             {% include "shows/_remove_modal.html" %}
           </div>
         {% else %}
-          <h2 class="h5">Track this show</h2>
+          <h2 class="h4">Track this show</h2>
+          <p class="text-body-secondary">Save your progress, a rating and your notes.</p>
           <a class="btn btn-primary w-100" href="{% url 'shows:entry_add' show.pk %}">Add to my watchlist</a>
           {% if not user.is_authenticated %}
             <p class="small text-body-secondary mt-2 mb-0">You'll be asked to log in first.</p>
@@ -48,4 +54,18 @@
     </div>
   </div>
 </div>
+
+{% if related_shows %}
+  <section>
+    <div class="section-heading">
+      <h2>More in {{ show.genre.name }}</h2>
+      <a class="small text-decoration-none" href="{% url 'shows:show_list' %}?genre={{ show.genre.name|urlencode }}">See all</a>
+    </div>
+    <div class="shelf">
+      {% for show in related_shows %}
+        {% include "shows/_show_card.html" %}
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}
 {% endblock %}

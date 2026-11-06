@@ -3,32 +3,34 @@
 {% block title %}Browse shows | TV Show Tracker{% endblock %}
 
 {% block content %}
-<h1 class="h3 mb-3">Browse shows</h1>
+<div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2 mb-3">
+  <h1 class="h2 mb-0">Browse shows</h1>
+  <span class="text-body-secondary">{{ page_obj.paginator.count }} show{{ page_obj.paginator.count|pluralize }}</span>
+</div>
 
-<form class="row g-2 mb-4" method="get" role="search">
-  <div class="col-12 col-md-6">
+<form class="row g-2 mb-3" method="get" role="search">
+  {% if selected_genre %}<input type="hidden" name="genre" value="{{ selected_genre }}">{% endif %}
+  <div class="col">
     <label class="visually-hidden" for="q">Search</label>
     <input class="form-control" id="q" type="search" name="q" value="{{ query }}" placeholder="Search by title or network">
   </div>
-  <div class="col-8 col-md-4">
-    <label class="visually-hidden" for="genre">Genre</label>
-    <select class="form-select" id="genre" name="genre">
-      <option value="">All genres</option>
-      {% for genre in genres %}
-        <option value="{{ genre.name }}" {% if genre.name == selected_genre %}selected{% endif %}>{{ genre.name }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <div class="col-4 col-md-2 d-grid">
+  <div class="col-auto">
     <button class="btn btn-primary" type="submit">Search</button>
   </div>
 </form>
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+<nav class="genre-chips mb-4" aria-label="Filter by genre">
+  <a class="genre-chip {% if not selected_genre %}active{% endif %}" href="{% querystring genre=None page=None %}">All</a>
+  {% for genre in genres %}
+    <a class="genre-chip {% if genre.name == selected_genre %}active{% endif %}" href="{% querystring genre=genre.name page=None %}">{{ genre.name }}</a>
+  {% endfor %}
+</nav>
+
+<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-xl-5 g-3">
   {% for show in page_obj %}
-    {% include "shows/_show_card.html" %}
+    <div class="col">{% include "shows/_show_card.html" %}</div>
   {% empty %}
-    <p class="text-body-secondary">No shows match your search.</p>
+    <p class="text-body-secondary w-100">No shows match your search.</p>
   {% endfor %}
 </div>
 
