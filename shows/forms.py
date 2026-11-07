@@ -6,6 +6,8 @@ from django import forms
 
 from .models import Show, ShowRequest, WatchEntry
 
+MAX_PENDING_REQUESTS_PER_USER = 10
+
 
 class BootstrapFormMixin:
     """Adds Bootstrap's CSS classes to every field's widget."""
@@ -53,3 +55,13 @@ class ShowRequestForm(BootstrapFormMixin, forms.ModelForm):
         if ShowRequest.objects.filter(title__iexact=title, status=ShowRequest.Status.PENDING).exists():
             raise forms.ValidationError(f'{title} has already been requested.')
         return title
+
+    def clean(self):
+        cleaned_data = super().clean()
+        pending = ShowRequest.objects.filter(requested_by=self.instance.requested_by, status=ShowRequest.Status.PENDING)
+        if pending.count() >= MAX_PENDING_REQUESTS_PER_USER:
+            raise forms.ValidationError(
+                f'You already have {MAX_PENDING_REQUESTS_PER_USER} pending requests. '
+                'You can request more once staff have reviewed them.'
+            )
+        return cleaned_data

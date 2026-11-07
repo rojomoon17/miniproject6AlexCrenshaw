@@ -161,8 +161,27 @@ episodes watched can't exceed the show's total, and choosing Completed marks eve
 
 ## Configuration
 
-`DJANGO_SECRET_KEY` sets the secret key. Without it, the app uses a development-only key so a fresh
-clone runs without setup. `DEBUG` is on, so this configuration is for local development only.
+With no configuration, the app runs in local development mode, with debug on and a public
+development-only secret key. Don't put it online that way. These environment variables configure a
+deployment:
+
+| Variable | Purpose |
+|---|---|
+| `DJANGO_DEBUG` | Set to `0` to turn off debug and require HTTPS, secure cookies and HSTS |
+| `DJANGO_SECRET_KEY` | The secret key. The app won't start without it when `DJANGO_DEBUG` is `0` |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated host names the site is served from |
+
+With debug off, `runserver` doesn't serve the CSS, and the HTTPS redirect needs an HTTPS server in front of
+the app. A real deployment also needs a production web server and static file hosting, which aren't set up here.
+
+## Security
+
+- Django's protections for cross-site scripting, CSRF, SQL injection, clickjacking and open redirects are on,
+  and no page turns them off
+- Logins, including the admin's, lock for 15 minutes after 5 failed attempts in a row for the same username
+  and IP address. The count is kept in memory, so it resets on restart and isn't shared between server processes
+- Each user can have up to 10 pending show requests
+- There's no limit on creating accounts
 
 ## AI Usage
 
@@ -188,3 +207,5 @@ This project was built with Claude (Opus 5.5, by Anthropic), used through Claude
 - I asked for a way to request a show and a page displaying requested shows; Claude chose the details,
   including the statuses, the duplicate checks and the public listing
 - I asked for an example request for Lanterns (2026); Claude wrote its network and note
+- I asked for a security check; Claude tested the site, then added the login lockout, the pending request
+  limit and the deployment settings

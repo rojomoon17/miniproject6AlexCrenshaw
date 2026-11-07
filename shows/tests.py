@@ -7,6 +7,7 @@ from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 
+from .forms import MAX_PENDING_REQUESTS_PER_USER
 from .models import Genre, Show, ShowRequest, WatchEntry
 
 
@@ -245,6 +246,15 @@ class ShowRequestTests(ShowTestCase):
         ShowRequest.objects.create(title='New Show', requested_by=self.bob, status='declined')
         self.assertRedirects(self.post_request(), self.list_url)
         self.assertEqual(ShowRequest.objects.count(), 2)
+
+    def test_limits_each_users_pending_requests(self):
+        for number in range(MAX_PENDING_REQUESTS_PER_USER):
+            ShowRequest.objects.create(title=f'Show {number}', requested_by=self.alice)
+        self.assertContains(self.post_request(), 'pending requests')
+        self.assertEqual(ShowRequest.objects.count(), MAX_PENDING_REQUESTS_PER_USER)
+
+        ShowRequest.objects.filter(title='Show 0').update(status='added')
+        self.assertRedirects(self.post_request(), self.list_url)
 
     def test_status_filter(self):
         ShowRequest.objects.create(title='Waiting Show', requested_by=self.alice)

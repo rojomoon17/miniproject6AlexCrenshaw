@@ -5,11 +5,14 @@
 from django.contrib import admin
 from django.db.models import Count
 
+from accounts.forms import AdminLoginForm
+
 from .models import Genre, Show, ShowRequest, WatchEntry
 
 admin.site.site_header = 'TV Show Tracker Admin'
 admin.site.site_title = 'TV Show Tracker Admin'
 admin.site.index_title = 'Manage the catalog and watchlists'
+admin.site.login_form = AdminLoginForm
 
 
 @admin.register(Genre)
