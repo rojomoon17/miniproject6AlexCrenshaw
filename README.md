@@ -185,27 +185,27 @@ the app. A real deployment also needs a production web server and static file ho
 
 ## AI Usage
 
-This project was built with Claude (Opus 5.5, by Anthropic), used through Claude Code.
+This project was built with Claude Code (Anthropic's agentic CLI, running Claude Opus 5.5). Below is a
+specific split of what the AI did and what I did.
 
-**Claude wrote all of the code and documentation:**
+**What Claude Code did:**
 
-- planned the project against the assignment rubric
-- designed the models, pages and URLs
-- wrote every Python file, all of the templates and this README
-- compiled the sample show data in `sample_shows.json` from its own knowledge, so the episode counts
-  and descriptions weren't checked against an outside source
-- wrote the automated tests and ran them, and checked the site from a fresh clone in a scripted
-  Microsoft Edge browser session
-- set up the virtual environment and made the commits, which list Claude as co-author
+- Planned the project against the assignment rubric and designed the models, pages and URLs.
+- Wrote all of the code: every Python file, template and stylesheet, and the automated tests.
+- Wrote this README.
+- Compiled the sample data in `sample_shows.json` from its own knowledge, so the episode counts,
+  descriptions and the Lanterns request weren't checked against an outside source.
+- Set up the virtual environment, ran the tests, and checked the site in a scripted Microsoft Edge session.
+- Ran a security check by sending common attacks at a test copy of the site and auditing the dependencies,
+  then added the login lockout, the pending request limit and the deployment settings.
+- Ran every `git` command. The commits list Claude as co-author.
 
-**My part was directing the project:**
+**What I (Alex) did:**
 
-- I gave Claude the assignment and the AI Use Policy
-- Claude first suggested a video game backlog tracker, and I chose a TV show tracker instead
-- after seeing screenshots, I asked for a darker color palette with red as the secondary color and a
-  more visually appealing way to organize the site; Claude chose the specific design
-- I asked for a way to request a show and a page displaying requested shows; Claude chose the details,
-  including the statuses, the duplicate checks and the public listing
-- I asked for an example request for Lanterns (2026); Claude wrote its network and note
-- I asked for a security check; Claude tested the site, then added the login lockout, the pending request
-  limit and the deployment settings
+- Gave Claude the assignment and the AI Use Policy.
+- Chose a TV show tracker instead of Claude's first suggestion, a video game backlog tracker.
+- Created the GitHub repository and decided when to commit and push.
+- Reviewed screenshots of the site and asked for a darker look with red as the secondary color and a more
+  visually appealing layout. Claude chose the specific design.
+- Asked for the show request feature, an example request for Lanterns (2026), a rubric check and a security
+  check. Claude chose how to build each one.
