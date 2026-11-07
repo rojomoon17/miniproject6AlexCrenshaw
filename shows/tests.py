@@ -271,3 +271,15 @@ class ShowRequestTests(ShowTestCase):
         self.client.force_login(self.alice)
         response = self.client.get(self.add_url, {'title': 'Missing Show'})
         self.assertEqual(response.context['form'].initial['title'], 'Missing Show')
+
+
+class SampleDataTests(TestCase):
+    fixtures = ['sample_shows']
+
+    def test_example_request_is_listed(self):
+        response = self.client.get(reverse('shows:request_list'))
+        self.assertContains(response, 'Lanterns (2026)')
+        self.assertContains(response, 'sample_viewer')
+
+    def test_example_user_cannot_log_in(self):
+        self.assertFalse(get_user_model().objects.get(username='sample_viewer').has_usable_password())

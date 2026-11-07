@@ -94,7 +94,8 @@ Create an admin account, which will ask for a username, email and password:
 python manage.py createsuperuser
 ```
 
-Optionally, load 17 sample shows so the catalog isn't empty:
+Optionally, load 17 sample shows and an example show request so the pages aren't empty. This also creates
+`sample_viewer`, the example request's user, which has no password and can't log in:
 
 ```bash
 python manage.py loaddata sample_shows
@@ -186,3 +187,4 @@ This project was built with Claude (Opus 5.5, by Anthropic), used through Claude
   more visually appealing way to organize the site; Claude chose the specific design
 - I asked for a way to request a show and a page displaying requested shows; Claude chose the details,
   including the statuses, the duplicate checks and the public listing
+- I asked for an example request for Lanterns (2026); Claude wrote its network and note
