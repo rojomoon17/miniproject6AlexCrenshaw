@@ -17,7 +17,8 @@ and notes. Staff manage the catalog through the Django admin.
 - Show pages that suggest other shows in the same genre
 - A form to add or update a show's status, progress, rating and notes, checked on the server
 - A Bootstrap modal to confirm removing a show from your watchlist
-- A customized Django admin for genres, shows and watch entries
+- A form for logged-in users to request a show, and a public page listing every request and its status
+- A customized Django admin for genres, shows, watch entries and show requests
 - Users can only see and change their own watchlist entries
 
 ## Pages
@@ -30,6 +31,8 @@ and notes. Staff manage the catalog through the Django admin.
 | `/shows/<id>/track/` | Form to add a show to your watchlist | Login required |
 | `/watchlist/` | Your watchlist, grouped by status | Login required |
 | `/watchlist/<id>/edit/` | Form to update your progress | Login required, owner only |
+| `/requests/` | Requested shows, with a filter by status | Public |
+| `/requests/new/` | Form to request a show | Login required |
 | `/accounts/register/` | Create an account | Public |
 | `/accounts/login/` | Log in | Public |
 | `/admin/` | Django admin | Staff only |
@@ -130,14 +133,15 @@ miniproject6AlexCrenshaw/
 ├── shows/                   Catalog and watchlists
 │   ├── admin.py             Admin configuration
 │   ├── forms.py             Bootstrap form mixin and the watch entry form
-│   ├── models.py            Genre, Show and WatchEntry
+│   ├── models.py            Genre, Show, WatchEntry and ShowRequest
 │   ├── tests.py
 │   ├── urls.py
 │   ├── views.py
 │   ├── fixtures/            sample_shows.json
 │   ├── migrations/
 │   └── templates/shows/     Page templates and reusable partials
-└── templates/               base.html and site-wide partials (navbar, messages, form fields)
+├── static/css/              site.css and admin.css
+└── templates/               base.html, site-wide partials and the admin theme override
 ```
 
 ## Data model
@@ -146,6 +150,10 @@ miniproject6AlexCrenshaw/
 - **Show:** title, genre, network, premiere year, season and episode counts, and a description.
 - **WatchEntry:** links one user to one show, with status, episodes watched, an optional rating from 1
   to 10, and notes. Each user can have only one entry per show.
+
+- **ShowRequest:** a title, an optional network and note, the user who asked, and a status (Pending, Added
+  or Declined). Staff set the status in the admin. The form rejects titles already in the catalog or
+  already pending. A request doesn't create a show, so staff add approved shows to the catalog themselves.
 
 `WatchEntry.clean()` holds the progress rules, so the site form and the admin both follow them:
 episodes watched can't exceed the show's total, and choosing Completed marks every episode as watched.
@@ -176,3 +184,5 @@ This project was built with Claude (Opus 5.5, by Anthropic), used through Claude
 - Claude first suggested a video game backlog tracker, and I chose a TV show tracker instead
 - after seeing screenshots, I asked for a darker color palette with red as the secondary color and a
   more visually appealing way to organize the site; Claude chose the specific design
+- I asked for a way to request a show and a page displaying requested shows; Claude chose the details,
+  including the statuses, the duplicate checks and the public listing

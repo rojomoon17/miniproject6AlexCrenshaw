@@ -16,4 +16,6 @@ urlpatterns = [
     path('watchlist/', views.watchlist, name='watchlist'),
     path('watchlist/<int:pk>/edit/', views.entry_edit, name='entry_edit'),
     path('watchlist/<int:pk>/remove/', views.entry_delete, name='entry_delete'),
+    path('requests/', views.request_list, name='request_list'),
+    path('requests/new/', views.request_add, name='request_add'),
 ]

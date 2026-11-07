@@ -319,3 +319,37 @@ a.poster:hover {
     transform: none;
   }
 }
+
+/* Show requests */
+.request-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--tv-line);
+  border-radius: 0.6rem;
+  background: var(--tv-surface);
+  overflow-wrap: anywhere;
+}
+
+.request-status {
+  padding: 0.15rem 0.65rem;
+  border: 1px solid var(--tv-line);
+  border-radius: 2rem;
+  color: var(--tv-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.request-status-added {
+  border-color: #14532d;
+  background: #14532d;
+  color: #fff;
+}
+
+.request-status-declined {
+  border-color: #5c111b;
+  background: #5c111b;
+  color: #ffc2c8;
+}

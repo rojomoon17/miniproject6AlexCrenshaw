@@ -9,10 +9,11 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import WatchEntryForm
-from .models import Genre, Show, WatchEntry
+from .forms import ShowRequestForm, WatchEntryForm
+from .models import Genre, Show, ShowRequest, WatchEntry
 
 SHOWS_PER_PAGE = 20
+REQUESTS_PER_PAGE = 20
 CONTINUE_WATCHING_COUNT = 3
 RELATED_SHOW_COUNT = 8
 
@@ -132,3 +133,34 @@ def entry_delete(request, pk):
     entry.delete()
     messages.success(request, f'Removed {title} from your watchlist.')
     return redirect('shows:watchlist')
+
+
+def request_list(request):
+    selected_status = request.GET.get('status', '')
+    show_requests = ShowRequest.objects.select_related('requested_by')
+    if selected_status in ShowRequest.Status.values:
+        show_requests = show_requests.filter(status=selected_status)
+    else:
+        selected_status = ''
+
+    context = {
+        'page_obj': Paginator(show_requests, REQUESTS_PER_PAGE).get_page(request.GET.get('page')),
+        'statuses': ShowRequest.Status.choices,
+        'selected_status': selected_status,
+    }
+    return render(request, 'shows/request_list.html', context)
+
+
+@login_required
+def request_add(request):
+    if request.method == 'POST':
+        form = ShowRequestForm(request.POST, instance=ShowRequest(requested_by=request.user))
+        if form.is_valid():
+            show_request = form.save()
+            messages.success(request, f'Thanks! You requested {show_request.title}.')
+            return redirect('shows:request_list')
+    else:
+        # The catalog's "no results" link passes the search text along as the title.
+        form = ShowRequestForm(initial={'title': request.GET.get('title', '').strip()})
+
+    return render(request, 'shows/request_form.html', {'form': form})

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Requested shows | TV Show Tracker{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h2 mb-0">Requested shows</h1>
+  <a class="btn btn-primary" href="{% url 'shows:request_add' %}">Request a show</a>
+</div>
+
+<nav class="genre-chips mb-4" aria-label="Filter by status">
+  <a class="genre-chip {% if not selected_status %}active{% endif %}" href="{% querystring status=None page=None %}">All</a>
+  {% for value, label in statuses %}
+    <a class="genre-chip {% if value == selected_status %}active{% endif %}" href="{% querystring status=value page=None %}">{{ label }}</a>
+  {% endfor %}
+</nav>
+
+<div class="d-grid gap-2">
+  {% for show_request in page_obj %}
+    <article class="request-row">
+      <div>
+        <h2 class="h5 mb-1">{{ show_request.title }}</h2>
+        <div class="small text-body-secondary">
+          {% if show_request.network %}{{ show_request.network }} &middot; {% endif %}Requested by {{ show_request.requested_by.username }} on {{ show_request.created_at|date:"M j, Y" }}
+        </div>
+        {% if show_request.note %}<p class="mt-2 mb-0">{{ show_request.note|linebreaksbr }}</p>{% endif %}
+      </div>
+      <span class="request-status request-status-{{ show_request.status }}">{{ show_request.get_status_display }}</span>
+    </article>
+  {% empty %}
+    <p class="text-body-secondary">{% if selected_status %}No requests with this status.{% else %}No shows have been requested yet.{% endif %}</p>
+  {% endfor %}
+</div>
+
+{% include "partials/_pagination.html" %}
+{% endblock %}

@@ -4,7 +4,7 @@
 
 from django import forms
 
-from .models import WatchEntry
+from .models import Show, ShowRequest, WatchEntry
 
 
 class BootstrapFormMixin:
@@ -33,3 +33,23 @@ class WatchEntryForm(BootstrapFormMixin, forms.ModelForm):
         episodes_field.help_text = (
             f'Out of {episode_count}. Choosing Completed marks every episode as watched.'
         )
+
+
+class ShowRequestForm(BootstrapFormMixin, forms.ModelForm):
+    """Expects an instance with requested_by already set by the view."""
+
+    class Meta:
+        model = ShowRequest
+        fields = ['title', 'network', 'note']
+        widgets = {'note': forms.Textarea(attrs={'rows': 3})}
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if Show.objects.filter(title__iexact=title).exists():
+            raise forms.ValidationError(
+                f'{title} is already in the catalog. If you mean a different show with the same name, '
+                'add its year or country to the title.'
+            )
+        if ShowRequest.objects.filter(title__iexact=title, status=ShowRequest.Status.PENDING).exists():
+            raise forms.ValidationError(f'{title} has already been requested.')
+        return title

@@ -92,3 +92,29 @@ class WatchEntry(models.Model):
     def progress_percent(self):
         # Capped because staff can lower a show's episode count after progress is recorded.
         return min(round(self.episodes_watched / self.show.episode_count * 100), 100)
+
+
+class ShowRequest(models.Model):
+    """A user's suggestion for a show to add to the catalog. Staff set the status in the admin."""
+
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'Pending'
+        ADDED = 'added', 'Added'
+        DECLINED = 'declined', 'Declined'
+
+    title = models.CharField(max_length=200)
+    network = models.CharField('network or streaming service', max_length=100, blank=True)
+    note = models.TextField(
+        max_length=500,
+        blank=True,
+        help_text='Optional. Your note and username appear on the public requests page.',
+    )
+    requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='show_requests')
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+
+    def __str__(self):
+        return f'{self.title} ({self.get_status_display()})'

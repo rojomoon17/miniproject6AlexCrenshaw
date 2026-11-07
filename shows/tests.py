@@ -7,7 +7,7 @@ from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Genre, Show, WatchEntry
+from .models import Genre, Show, ShowRequest, WatchEntry
 
 
 class ShowTestCase(TestCase):
@@ -190,3 +190,84 @@ class ProgressTests(ShowTestCase):
     def test_progress_is_capped_if_episode_count_is_lowered(self):
         entry = WatchEntry(user=self.alice, show=self.show, episodes_watched=15)
         self.assertEqual(entry.progress_percent, 100)
+
+
+class ShowRequestTests(ShowTestCase):
+    def setUp(self):
+        self.list_url = reverse('shows:request_list')
+        self.add_url = reverse('shows:request_add')
+
+    def post_request(self, **overrides):
+        self.client.force_login(self.alice)
+        data = {'title': 'New Show', 'network': 'Netflix', 'note': 'Please add it'}
+        data.update(overrides)
+        return self.client.post(self.add_url, data)
+
+    def test_list_is_public_and_shows_the_request(self):
+        ShowRequest.objects.create(title='New Show', note='Please add it', requested_by=self.alice)
+        response = self.client.get(self.list_url)
+        self.assertContains(response, 'New Show')
+        self.assertContains(response, 'Please add it')
+        self.assertContains(response, 'alice')
+
+    def test_add_requires_login(self):
+        self.assertRedirects(self.client.get(self.add_url), f"{reverse('login')}?next={self.add_url}")
+        self.client.post(self.add_url, {'title': 'New Show'})
+        self.assertFalse(ShowRequest.objects.exists())
+
+    def test_add_saves_a_pending_request_for_the_logged_in_user(self):
+        self.assertRedirects(self.post_request(), self.list_url)
+        show_request = ShowRequest.objects.get()
+        self.assertEqual(
+            (show_request.title, show_request.network, show_request.requested_by, show_request.status),
+            ('New Show', 'Netflix', self.alice, 'pending'),
+        )
+
+    def test_form_ignores_posted_status_and_requester(self):
+        self.post_request(status='added', requested_by=self.bob.pk)
+        show_request = ShowRequest.objects.get()
+        self.assertEqual((show_request.status, show_request.requested_by), ('pending', self.alice))
+
+    def test_rejects_a_blank_title(self):
+        self.assertIn('title', self.post_request(title='   ').context['form'].errors)
+        self.assertFalse(ShowRequest.objects.exists())
+
+    def test_rejects_a_show_already_in_the_catalog(self):
+        self.assertIn('title', self.post_request(title='test crime show').context['form'].errors)
+        self.assertFalse(ShowRequest.objects.exists())
+
+    def test_rejects_a_title_with_a_pending_request(self):
+        ShowRequest.objects.create(title='New Show', requested_by=self.bob)
+        self.assertIn('title', self.post_request(title='new show').context['form'].errors)
+        self.assertEqual(ShowRequest.objects.count(), 1)
+
+    def test_a_declined_title_can_be_requested_again(self):
+        ShowRequest.objects.create(title='New Show', requested_by=self.bob, status='declined')
+        self.assertRedirects(self.post_request(), self.list_url)
+        self.assertEqual(ShowRequest.objects.count(), 2)
+
+    def test_status_filter(self):
+        ShowRequest.objects.create(title='Waiting Show', requested_by=self.alice)
+        ShowRequest.objects.create(title='Refused Show', requested_by=self.alice, status='declined')
+        response = self.client.get(self.list_url, {'status': 'declined'})
+        self.assertContains(response, 'Refused Show')
+        self.assertNotContains(response, 'Waiting Show')
+
+    def test_unknown_status_shows_everything(self):
+        ShowRequest.objects.create(title='Waiting Show', requested_by=self.alice)
+        response = self.client.get(self.list_url, {'status': 'nonsense'})
+        self.assertContains(response, 'Waiting Show')
+        self.assertEqual(response.context['selected_status'], '')
+
+    def test_user_text_is_escaped(self):
+        ShowRequest.objects.create(title='<script>x</script>', note='<b>y</b>', requested_by=self.alice)
+        response = self.client.get(self.list_url)
+        self.assertNotContains(response, '<script>x</script>')
+        self.assertNotContains(response, '<b>y</b>')
+
+    def test_empty_search_links_to_a_prefilled_request(self):
+        response = self.client.get(reverse('shows:show_list'), {'q': 'Missing Show'})
+        self.assertContains(response, f'{self.add_url}?title=Missing%20Show')
+        self.client.force_login(self.alice)
+        response = self.client.get(self.add_url, {'title': 'Missing Show'})
+        self.assertEqual(response.context['form'].initial['title'], 'Missing Show')

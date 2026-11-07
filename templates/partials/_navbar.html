@@ -9,6 +9,7 @@
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item"><a class="nav-link {% if current == 'show_list' %}active{% endif %}" href="{% url 'shows:show_list' %}">Browse shows</a></li>
+        <li class="nav-item"><a class="nav-link {% if current == 'request_list' or current == 'request_add' %}active{% endif %}" href="{% url 'shows:request_list' %}">Requests</a></li>
         {% if user.is_authenticated %}
           <li class="nav-item"><a class="nav-link {% if current == 'watchlist' %}active{% endif %}" href="{% url 'shows:watchlist' %}">My watchlist</a></li>
         {% endif %}

@@ -5,7 +5,7 @@
 from django.contrib import admin
 from django.db.models import Count
 
-from .models import Genre, Show, WatchEntry
+from .models import Genre, Show, ShowRequest, WatchEntry
 
 admin.site.site_header = 'TV Show Tracker Admin'
 admin.site.site_title = 'TV Show Tracker Admin'
@@ -64,4 +64,19 @@ class WatchEntryAdmin(admin.ModelAdmin):
         (None, {'fields': ['user', 'show']}),
         ('Progress', {'fields': ['status', 'episodes_watched', 'rating']}),
         ('Notes', {'fields': ['notes', 'updated_at']}),
+    ]
+
+
+@admin.register(ShowRequest)
+class ShowRequestAdmin(admin.ModelAdmin):
+    list_display = ['title', 'network', 'requested_by', 'status', 'created_at']
+    list_editable = ['status']
+    list_filter = ['status']
+    list_select_related = ['requested_by']
+    search_fields = ['title', 'network', 'requested_by__username']
+    autocomplete_fields = ['requested_by']
+    readonly_fields = ['created_at']
+    fieldsets = [
+        (None, {'fields': ['title', 'network', 'note']}),
+        ('Review', {'fields': ['requested_by', 'status', 'created_at']}),
     ]
